@@ -8,6 +8,11 @@ on idle
 	global endDate
 	global presentStatus
 	global cachedStatus
+	try
+	cachedStatus
+	on error
+	set cachedStatus to ""
+	end try
 	global results
 	global emailAddress
 	try
@@ -56,7 +61,7 @@ on idle
 		end if
 	end tell
 	
-	return 900 -- every 15 minutes
+	return 30 -- every 30 seconds
 end idle
 
 on quit
