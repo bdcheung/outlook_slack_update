@@ -4,6 +4,6 @@ This app works with Outlook and Slack to update your Slack status based on your 
 
 # How to use
 1. Download and unzip the latest release.
-1. Double-click to run the app
+1. Double-click to run the app (this will automatically open Outlook and Slack if they aren't already open)
 1. When prompted, enter the email address of the attendee whose status you want to use.
 1. Profit!
