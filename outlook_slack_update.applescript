@@ -7,6 +7,7 @@ on idle
 	global startDate
 	global endDate
 	global presentStatus
+	global cachedStatus
 	global results
 	global emailAddress
 	try
@@ -24,19 +25,34 @@ on idle
 		set results to query freebusy exchange account 1 for attendees emailAddress range start time startDate range end time endDate interval 5 as list
 		set presentStatus to results's last item as string
 		
-		if presentStatus = "free" then
-			-- noop
+		if presentStatus = cachedStatus then
+			-- Do nothing
 		else
-			tell application "System Events"
-				tell application "Slack" to activate
-				key code 18 using {command down}
-				delay 1
-				keystroke "/status :no_entry_sign: On a call or in a meeting"
-				delay 0.5
-				key code 36
-				delay 0.3
-				set visible of process "Slack" to false
-			end tell
+			if presentStatus = "free" then
+				tell application "System Events"
+					tell application "Slack" to activate
+					key code 18 using {command down}
+					delay 1
+					keystroke "/status :free: Free and available!"
+					delay 0.5
+					key code 36
+					delay 0.3
+					set visible of process "Slack" to false
+				end tell
+				set cachedStatus to "free"
+			else
+				tell application "System Events"
+					tell application "Slack" to activate
+					key code 18 using {command down}
+					delay 1
+					keystroke "/status :no_entry_sign: On a call or in a meeting"
+					delay 0.5
+					key code 36
+					delay 0.3
+					set visible of process "Slack" to false
+				end tell
+				set cachedStatus to "busy"
+			end if
 		end if
 	end tell
 	
