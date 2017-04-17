@@ -1,35 +1,26 @@
-on run
-	launch application "Microsoft Outlook"
-	launch application "Slack"
-end run
+launch application "Microsoft Outlook"
+launch application "Slack"
 
-on idle
-	global startDate
-	global endDate
-	global presentStatus
-	global cachedStatus
-	try
-		cachedStatus
-	on error
-		set cachedStatus to ""
-	end try
-	global results
-	global emailAddress
-	try
-		emailAddress
-	on error
-		display dialog "Email address..." default answer "first.last@phishme.com" with title "Email Address"
-		set emailAddress to text returned of result
-		
-	end try
+property startDate : current date
+property endDate : startDate + (5 * minutes)
+property cachedStatus : ""
+property results : {}
+property running : true
+
+global emailAddress
+try
+	emailAddress
+on error
+	display dialog "Email address..." default answer "first.last@phishme.com" with title "Email Address"
+	set emailAddress to text returned of result
 	
-	set startDate to (current date)
-	set endDate to startDate + (5 * minutes)
-	
+end try
+
+repeat while running
 	tell application "Microsoft Outlook"
 		set results to query freebusy exchange account 1 for attendees emailAddress range start time startDate range end time endDate interval 5 as list
 		set presentStatus to results's last item as string
-
+		
 		if presentStatus = cachedStatus then
 			-- Do nothing
 		else
@@ -85,11 +76,5 @@ on idle
 		end if
 	end tell
 	
-	return 30 -- every 30 seconds
-end idle
-
-on quit
-	quit application "Microsoft Outlook"
-	quit application "Slack"
-	continue quit
-end quit
+	delay 60
+end repeat
